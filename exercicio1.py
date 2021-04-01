@@ -209,5 +209,3 @@ calcula_R_rk4()
 h = (3.0-1.1)/5000
 solucao_euler = euler_implicito(1.1, 3.0, -8.79, h)
 plota_grafico(solucao_euler)
-
-
