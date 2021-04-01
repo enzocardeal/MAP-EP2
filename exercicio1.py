@@ -144,24 +144,51 @@ def calcula_R_rk4():
         R_i = (np.amax(erro[i], axis=1)[1])/(np.amax(erro[i+1], axis=1)[1])
         print(R_i)
 
+# Euler
+def inv_jacob_euler(t,x, h):
+    g_linha = 1-h*(2*(x-t**2))
+    if g_linha != 0:
+        inv_jacobiano = 1/g_linha
+        return(inv_jacobiano)
+    return("erro: infinito")
+
+def g_euler(tk, x_k1, x_k, h):
+    g_k1 = x_k1 - h*funcao_euler(tk, x_k1) - x_k
+
+    return(g_k1)
+
+def metodo_de_newton(h, tk, xk_inic):
+
+    xk1 = xk_inic
+
+    for l in range(7):
+        Jacob_inv = inv_jacob_euler(tk, xk1, h)
+        G = g_euler(tk, xk1, xk_inic, h)
+
+        aux = xk1 - Jacob_inv*G
+        xk1 = aux
+
+    return xk1
+
 # Metodo de Euler Implicito
-def euler_implicito(t_inicial, t_final, x_inicial, h):
+def euler_implicito(t_inicial, t_final, x_inicial, n):
+    h = (t_final - t_inicial)/n
+
     # faz a matriz solucao
     solucao = []
     solucao = np.insert(solucao, len(solucao), t_inicial)
     solucao = np.insert(solucao, len(solucao), x_inicial)
 
-    # valores iniciais
-    tn = t_inicial
-    xn = x_inicial
+    xk = x_inicial
+    tk = t_inicial + h
     
     # interacao metodo de euler
-    while tn < t_final:
-        tn += h
-        xn1 = xn + h*funcao_euler(tn, xn+h)
-        xn = xn1
+    while tk < t_final:
+        xk1 =  metodo_de_newton(h, tk,xk)
 
-        solucao = np.vstack([solucao,[tn, xn]])
+        solucao = np.vstack([solucao,[tk, xk1]])
+        tk += h
+        xk = xk1
         
     return(solucao)
 
@@ -195,7 +222,7 @@ def plota_grafico(solucao):
     erro = erro_euler(solucao)
     
     ax3.plot(erro[:,0], erro[:,1], 'tab:green')
-    ax3.set_title("Erro")
+    ax3.set_title("Erro vezes 100")
 
     plt.savefig("solucao_" +"euler_implicito" + ".jpg",bbox_inches='tight')
     print("Imagem Salva!")
@@ -206,8 +233,7 @@ plota_erro()
 calcula_R_rk4()
 
 # euler
-h = (3.0-1.1)/5000
-solucao_euler = euler_implicito(1.1, 3.0, -8.79, h)
+solucao_euler = euler_implicito(1.1, 3.0, -8.79, 5000)
 plota_grafico(solucao_euler)
 
 
