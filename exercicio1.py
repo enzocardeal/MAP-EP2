@@ -110,19 +110,47 @@ def lista_erro_rk4():
 def plota_erro():
     erro = lista_erro_rk4()
     n = [20,40,80,160,320,640]
-    tamanho = len(erro)
-    
-    for i in range(tamanho):
-        funcao = erro[i]
-        fig, ax = plt.subplots()
-        ax.plot(funcao[:,0], funcao[:,1], 'tab:purple')
-        ax.set_title("Erro com n igual a " + str(n[i]))
+    #tamanho = len(erro)
 
-        plt.savefig("solucao_" +"rungekutta4_" + str(i)
-                    + ".jpg",bbox_inches='tight')
-        print("Imagem Salva!")
+    gs = gridspec.GridSpec(2, 3)
+    gs.update(wspace=.1, hspace=.25)
+    fig = plt.figure(figsize=(25, 10))
+    fig.suptitle('Gráficos de $E_{1, n}(t)$', size='xx-large')
 
-        plt.show()
+    ax1 = plt.subplot(gs[0, 0])
+    ax1 = ax1.set_title('Erro para $n=20$')
+    plt.plot(erro[0][:, 0], erro[0][:, 1], c='blue')
+    plt.xlabel('Tempo t')
+    plt.ylabel('$E_{1, n}(t)$')
+
+    ax2 = plt.subplot(gs[0, 1])
+    ax2 = ax2.set_title('Erro para $n=40$')
+    plt.plot(erro[1][:, 0], erro[1][:, 1], c='blue')
+    plt.xlabel('Tempo t')
+
+    ax3 = plt.subplot(gs[0, 2])
+    ax3 = ax3.set_title('Erro para $n=80$')
+    plt.plot(erro[2][:, 0], erro[2][:, 1], c='blue')
+    plt.xlabel('Tempo')
+
+    ax4 = plt.subplot(gs[1, 0])
+    ax4 = ax4.set_title('Erro para $n=160$')
+    plt.plot(erro[3][:, 0], erro[3][:, 1], c='blue')
+    plt.xlabel('Tempo t')
+    plt.ylabel('$E_{1, n}(t)$')
+
+    ax5 = plt.subplot(gs[1, 1])
+    ax5 = ax5.set_title('Erro para $n=320$')
+    plt.plot(erro[4][:, 0], erro[4][:, 1], c='blue')
+    plt.xlabel('Tempo t')
+
+    ax6 = plt.subplot(gs[1, 2])
+    ax6 = ax6.set_title('Erro para $n=640$')
+    plt.plot(erro[5][:, 0], erro[5][:, 1], c='blue')
+    plt.xlabel('Tempo t')
+
+    plt.savefig("ex_1-erro-runge-kuttan_4", dpi=300)
+    print("Gráficos dos Erros de RK4 gerados. Imagem Salva!")
 
 # Funcao que calcula e plota o R
 def calcula_R_rk4():
@@ -136,13 +164,11 @@ def calcula_R_rk4():
 
     fig, ax = plt.subplots()
     ax.plot(delta_n, R_i, color='green')
-    ax.set_title("$R_{i}$ em funcao de $\Delta n$")
-    ax.set_xlabel('$\Delta n$')
+    ax.set_title("$R_{i}$ em funcao de $n$")
+    ax.set_xlabel('$n$')
     ax.set_ylabel('$R_{i}$')
-    plt.savefig("R_i_" +"rungekutta4_"+ ".jpg",bbox_inches='tight')
-    print("Imagem Salva!")
-
-    plt.show()
+    plt.savefig("ex_1_R_i_" +"rungekutta4_", dpi=300)
+    print("Gráfico de R_i em função de n gerado. Imagem Salva!")
 
     
 
@@ -184,7 +210,7 @@ def euler_implicito(t_inicial, t_final, x_inicial, n):
     xk = x_inicial
     tk = t_inicial + h
     
-    # interacao metodo de euler
+    # iteracao metodo de euler
     while tk < t_final:
         xk1 =  metodo_de_newton(h, tk,xk)
 
@@ -222,20 +248,25 @@ def plota_grafico(solucao):
 
     ax = plt.subplot(gs[0,0]) # linha 0, coluna 0
     ax.set_title("Esperado")
-    plt.plot(t,x)
+    plt.plot(t,x, c='blue')
+    plt.ylabel("$x^{*}(t)$")
+    plt.xlabel("Tempo t")
 
     ax = plt.subplot(gs[0,1]) # linha 0, coluna 1
     ax.set_title("Resolvido por Euler")
-    plt.plot(solucao[:, 0], solucao[:, 1], 'tab:orange')
+    plt.plot(solucao[:, 0], solucao[:, 1], c='orange')
+    plt.ylabel("$x(t)$")
+    plt.xlabel("Tempo t")
 
     ax = plt.subplot(gs[1, :])  # linha 1, toda a coluna
     ax.set_title("Erro")
-    plt.plot(erro[:,0], erro[:,1], 'tab:green')
+    plt.plot(erro[:,0], erro[:,1], c='green')
+    plt.ylabel("$E_{2}(t)$")
+    plt.xlabel("Tempo t")
 
     fig.tight_layout()
-    plt.savefig("solucao_" +"euler_implicito" + ".jpg",bbox_inches='tight')
-    print("Imagem Salva!")
-    plt.show()
+    plt.savefig("ex_1_solucao_" +"euler_implicito", dpi=300)
+    print("Gráficos comparando solução exata e solução calculada gerados. Imagem Salva!")
 
 # Runge Kutta 4
 plota_erro()
@@ -243,5 +274,7 @@ calcula_R_rk4()
 # euler
 solucao_euler = euler_implicito(1.1, 3.0, -8.79, 5000)
 plota_grafico(solucao_euler)
+
+print("Finalizado. Conferir pasta raiz para arquivos dos gráficos gerados.")
 
 

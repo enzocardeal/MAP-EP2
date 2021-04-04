@@ -1,3 +1,9 @@
+# Exercicio 2 - Modelo presa-predador
+# MAP3122 - Métodos Numéricos e Aplicações
+# Resolvido por:
+# Enzo Cardeal Neves NUSP - 11257522
+# Guilherme Mariano S.F NUSP - 11257539
+
 # importando dependencias necessárias
 import numpy as np
 import matplotlib.pyplot as plt
