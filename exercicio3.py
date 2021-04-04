@@ -240,9 +240,9 @@ tf = [100, 500, 2000]
 condicoes_iniciais = [500, 500, 10]
 for i in range(len(alpha)):
     solucao = runge_kutta4(to, tf[int(i/2)], condicoes_iniciais, alpha[i])
-    plota_grafico3D(solucao, alpha[i], "Rk4")
+    plota_grafico3D(solucao, alpha[i], "RK4")
     plota_grafico2D(solucao, alpha[i], "RK4")
-
+    plota_tamanho(solucao, alpha[i], "RK4")
 
 # Teste de sensibilidade
 alpha =  0.005
@@ -250,6 +250,6 @@ condicoes_iniciais = [[35,75, 137],[37,74,137]]
 tf = 400
 for i in range(len(condicoes_iniciais)):
     solucao = runge_kutta4(to, tf, condicoes_iniciais[i], alpha)
-    plota_grafico3D(solucao, alpha, "Rk4_sensib" + str(i))
-    plota_grafico2D(solucao, alpha, "Rk4_sensib" + str(i))
-    plota_tamanho(solucao, alpha, "Rk4_sensib" + str(i))
+    plota_grafico3D(solucao, alpha, "RK4_sensib" + str(i))
+    plota_grafico2D(solucao, alpha, "RK4_sensib" + str(i))
+    plota_tamanho(solucao, alpha, "RK4_sensib" + str(i))
