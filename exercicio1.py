@@ -80,7 +80,6 @@ def runge_kutta4(t_inicial, t_final, x_inicial, n):
 # Funcao que devolve E1,n(t) := max 1<i<4 |xi*(t) - xi(t)|
 def erro_kutta4(solucao):
     erro = []
-    guarda_valor = 0
     for i in range (len(solucao)):
         dif_abs =-1
         for j in range(1,5):   
