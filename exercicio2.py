@@ -148,7 +148,7 @@ def ex2_runge_kuttan4 (T0, Tf, n, u0, lamb, alpha, beta, gamma, linspc):
 
 #Cabeçalho
 print("                Escola Politécnica da Universidade de São Paulo")
-print("                  MAP3122 - Métodos num´ericos para resolução de EDOs")
+print("               MAP3122 - Métodos num´ericos para resolução de EDOs")
 print("                                     Exercício 2")
 print("---------------------------------------------------------------------------------------------------\n\n")
 
