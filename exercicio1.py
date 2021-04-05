@@ -7,13 +7,19 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+import matplotlib.gridspec as gridspec
 
 # Valores globais para Runge-Kutta 4
 A = np.array([[-2,-1,-1,-2],[1,-2,2,-1],[-1,-2,-2,-1],[2,-1,1,-2]])
 
+# Valores globais para euler
+t = np.linspace(1.1, 3.0, 5000)
+x = t**2 + 1/(1-t)
+
 # Funcoes Runge Kutta
 def funcao_kutta4(t,x):
-    return np.dot(A,x)
+    funcao = np.dot(A,x)
+    return funcao
 
 def funcao_exata_kutta4(t):
     funcao = []
@@ -24,10 +30,6 @@ def funcao_exata_kutta4(t):
 
     funcao.extend([funcao_1,funcao_2,funcao_3,funcao_4])
     return(funcao)
-
-# Valores globais para euler
-t = np.linspace(1.1, 3.0, 5000)
-x = t**2 + 1/(1-t)
 
 # Funcoes Euler
 def funcao_euler(t,x):
@@ -41,20 +43,21 @@ def funcao_exata_euler(t):
 # retorna somatoria CpKp
 def funcao_phi(t,x,h):
     # coeficientes
-    k1 = funcao_kutta4(t,x)
-    k2 = funcao_kutta4(t+h/2,x+h/2*k1)
-    k3 = funcao_kutta4(t+h/2,x+h/2*k2)
-    k4 = funcao_kutta4(t+h,x+h*k3)
+    k1 = h*funcao_kutta4(t,x)
+    k2 = h*funcao_kutta4(t+h/2,x+k1/2)
+    k3 = h*funcao_kutta4(t+h/2,x+k2/2)
+    k4 = h*funcao_kutta4(t+h,x+k3)
 
     k_total = (k1)/6+(k2)/3+(k3)/3+(k4)/6
-
     return(k_total)
 
 # Realiza o algoritmo de Runge Kutta 4
-def runge_kutta4(t_inicial, t_final, x_inicial, h):
+def runge_kutta4(t_inicial, t_final, x_inicial, n):
     solucao = []
     solucao = np.insert(solucao, len(solucao), t_inicial)
     solucao = np.insert(solucao, len(solucao), x_inicial)
+
+    h = (t_final - t_inicial)/n
 
     tn = t_inicial
     xn = x_inicial
@@ -62,40 +65,26 @@ def runge_kutta4(t_inicial, t_final, x_inicial, h):
     while tn < t_final:
         v_aux = []
         
-        xn1 = xn + h*funcao_phi(tn,xn,h)
+        xn1 = xn + funcao_phi(tn,xn,h)
         xn = xn1
 
+        tn += h
+        
         v_aux.append(tn)
         v_aux.extend(xn)
         solucao = np.vstack((solucao, v_aux))
         
-        tn += h
         
     return(solucao)
 
 # Funcao que devolve E1,n(t) := max 1<i<4 |xi*(t) - xi(t)|
 def erro_kutta4(solucao):
     erro = []
-    guarda_valor = 0
-    guarda_j = 0
-
-    # Procura o maior erro entre as funcoes
-    for j in range (1,5):
-        for i in range(len(solucao)):
-            t = solucao[i,0]
-            dif_abs = abs(solucao[i,j] - funcao_exata_kutta4(t)[j-1])
-
-        if(dif_abs > guarda_valor):
-            guarda_valor = dif_abs
-            guarda_j = j
-
-    j = guarda_j
-    
-    # Pega a funcao com maior erro
     for i in range (len(solucao)):
-        t = solucao[i,0]
-        dif_abs = abs(solucao[i,j] - funcao_exata_kutta4(t)[j])
-
+        dif_abs =-1
+        for j in range(1,5):   
+            t = solucao[i,0]
+            dif_abs = max(dif_abs, abs(solucao[i,j] - funcao_exata_kutta4(t)[j-1]))
         if(i == 0):
             erro.extend([t, dif_abs])
         else:
@@ -105,14 +94,13 @@ def erro_kutta4(solucao):
 # Devolve a lista de erros com n igual a 20,40,80,160,320 e 640
 def lista_erro_rk4():
     n = [20,40,80,160,320,640]
-    h = [2/20,2/40,2/80,2/160,2/320, 2/640]
     
-    erro_1 = erro_kutta4(runge_kutta4(0, 2, [1,1,1,-1], h[0]))
-    erro_2 = erro_kutta4(runge_kutta4(0, 2, [1,1,1,-1], h[1]))
-    erro_3 = erro_kutta4(runge_kutta4(0, 2, [1,1,1,-1], h[2]))
-    erro_4 = erro_kutta4(runge_kutta4(0, 2, [1,1,1,-1], h[3]))
-    erro_5 = erro_kutta4(runge_kutta4(0, 2, [1,1,1,-1], h[4]))
-    erro_6 = erro_kutta4(runge_kutta4(0, 2, [1,1,1,-1], h[5]))
+    erro_1 = erro_kutta4(runge_kutta4(0, 2, [1,1,1,-1], n[0]))
+    erro_2 = erro_kutta4(runge_kutta4(0, 2, [1,1,1,-1], n[1]))
+    erro_3 = erro_kutta4(runge_kutta4(0, 2, [1,1,1,-1], n[2]))
+    erro_4 = erro_kutta4(runge_kutta4(0, 2, [1,1,1,-1], n[3]))
+    erro_5 = erro_kutta4(runge_kutta4(0, 2, [1,1,1,-1], n[4]))
+    erro_6 = erro_kutta4(runge_kutta4(0, 2, [1,1,1,-1], n[5]))
 
     erro = [erro_1, erro_2, erro_3, erro_4, erro_5, erro_6]
 
@@ -122,7 +110,7 @@ def lista_erro_rk4():
 def plota_erro():
     erro = lista_erro_rk4()
     n = [20,40,80,160,320,640]
-    tamanho = len(erro)-1
+    tamanho = len(erro)
     
     for i in range(tamanho):
         funcao = erro[i]
@@ -136,13 +124,27 @@ def plota_erro():
 
         plt.show()
 
-# Funcao que calcula o R 
+# Funcao que calcula e plota o R
 def calcula_R_rk4():
     erro = lista_erro_rk4()
-    
+    R_i = []
+    delta_n = [20, 40, 80, 160, 320]
     for i in range(5):
-        R_i = (np.amax(erro[i], axis=1)[1])/(np.amax(erro[i+1], axis=1)[1])
-        print(R_i)
+        div_maxima = (np.amax(erro[i], axis=0)[1])/(np.amax(erro[i+1], axis=0)[1])
+        print(div_maxima)
+        R_i.append(div_maxima)
+
+    fig, ax = plt.subplots()
+    ax.plot(delta_n, R_i, color='green')
+    ax.set_title("$R_{i}$ em funcao de $\Delta n$")
+    ax.set_xlabel('$\Delta n$')
+    ax.set_ylabel('$R_{i}$')
+    plt.savefig("R_i_" +"rungekutta4_"+ ".jpg",bbox_inches='tight')
+    print("Imagem Salva!")
+
+    plt.show()
+
+    
 
 # Euler
 def inv_jacob_euler(t,x, h):
@@ -192,15 +194,13 @@ def euler_implicito(t_inicial, t_final, x_inicial, n):
         
     return(solucao)
 
-# Funcao que calcula o erro E2(t) := |x*-x|*100
-# Obs: o *100 é utilizado para ver alguma diferença,
-# já que o metodo é bastante eficiente
+# Funcao que calcula o erro E2(t) := |x*-x|
 def erro_euler(solucao):
     erro = []
     
     for i in range (len(solucao)):
         t = solucao[i,0]
-        dif_abs = abs(solucao[i,1] - funcao_exata_euler(t))*100
+        dif_abs = abs(solucao[i,1] - funcao_exata_euler(t))
 
         if(i == 0):
             erro.extend([t, dif_abs])
@@ -211,19 +211,28 @@ def erro_euler(solucao):
 
 # Plota o grafico da solucao esperada, resolvida e do erro
 def plota_grafico(solucao):
-    fig, (ax1,ax2, ax3) = plt.subplots(1,3,sharex='col', sharey='row')
-    fig.suptitle('Comparacao do Esperado e do resolvido por Euler')
-    ax1.set_title("Esperado")
-    ax1.plot(t,x)
-
-    ax2.plot(solucao[:, 0], solucao[:, 1], 'tab:orange')
-    ax2.set_title("Resolvido por Euler")
-
+    # Calcula erro
     erro = erro_euler(solucao)
-    
-    ax3.plot(erro[:,0], erro[:,1], 'tab:green')
-    ax3.set_title("Erro vezes 100")
 
+    # Cria 2x2 sub plotagem
+    gs = gridspec.GridSpec(2,2)
+
+    fig = plt.figure()
+    fig.suptitle('Comparacao do Esperado e do resolvido por Euler')
+
+    ax = plt.subplot(gs[0,0]) # linha 0, coluna 0
+    ax.set_title("Esperado")
+    plt.plot(t,x)
+
+    ax = plt.subplot(gs[0,1]) # linha 0, coluna 1
+    ax.set_title("Resolvido por Euler")
+    plt.plot(solucao[:, 0], solucao[:, 1], 'tab:orange')
+
+    ax = plt.subplot(gs[1, :])  # linha 1, toda a coluna
+    ax.set_title("Erro")
+    plt.plot(erro[:,0], erro[:,1], 'tab:green')
+
+    fig.tight_layout()
     plt.savefig("solucao_" +"euler_implicito" + ".jpg",bbox_inches='tight')
     print("Imagem Salva!")
     plt.show()
@@ -231,7 +240,6 @@ def plota_grafico(solucao):
 # Runge Kutta 4
 plota_erro()
 calcula_R_rk4()
-
 # euler
 solucao_euler = euler_implicito(1.1, 3.0, -8.79, 5000)
 plota_grafico(solucao_euler)
