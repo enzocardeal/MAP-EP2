@@ -268,11 +268,24 @@ def plota_grafico(solucao):
     plt.savefig("ex_1_solucao_" +"euler_implicito", dpi=300)
     print("Gráficos comparando solução exata e solução calculada gerados. Imagem Salva!")
 
+#Cabeçalho
+print("                Escola Politécnica da Universidade de São Paulo")
+print("               MAP3122 - Métodos numéricos para resolução de EDOs")
+print("                                     Exercício 1")
+print("---------------------------------------------------------------------------------------------------\n\n")
+
 # Runge Kutta 4
+print('Gerando gráfico de E1,n.')
 plota_erro()
+print('Gráficos gerados e salvados na pasta raíz do programa.\n')
+print('Gerando R_i em função do n.')
 calcula_R_rk4()
+print('Gráfico gerado e salvado na pasta raíz do programa.\n')
 # euler
+print('Gerando gráfico solução a partir do método de Euler implícito')
 solucao_euler = euler_implicito(1.1, 3.0, -8.79, 5000)
+print('Plotando gráficos comparativos da solução exata com a solução a partir de Euler implícito')
 plota_grafico(solucao_euler)
+print("Gráficos gerados e salvados na pasta raíz do programa.\n\n")
 
 print("Finalizado. Conferir pasta raiz para arquivos dos gráficos gerados.")
