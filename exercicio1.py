@@ -244,7 +244,7 @@ def plota_grafico(solucao):
     gs = gridspec.GridSpec(2,2)
 
     fig = plt.figure()
-    fig.suptitle('Comparacao do Esperado e do resolvido por Euler')
+    fig.suptitle('Comparação da solução explícita e da obtida\na partir do método de Euler implícito')
 
     ax = plt.subplot(gs[0,0]) # linha 0, coluna 0
     ax.set_title("Esperado")
@@ -276,5 +276,3 @@ solucao_euler = euler_implicito(1.1, 3.0, -8.79, 5000)
 plota_grafico(solucao_euler)
 
 print("Finalizado. Conferir pasta raiz para arquivos dos gráficos gerados.")
-
-

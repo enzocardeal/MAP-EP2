@@ -154,7 +154,7 @@ def ex2_runge_kuttan4 (T0, Tf, n, u0, lamb, alpha, beta, gamma, linspc):
 
 #Cabeçalho
 print("                Escola Politécnica da Universidade de São Paulo")
-print("               MAP3122 - Métodos num´ericos para resolução de EDOs")
+print("               MAP3122 - Métodos numéricos para resolução de EDOs")
 print("                                     Exercício 2")
 print("---------------------------------------------------------------------------------------------------\n\n")
 
@@ -177,7 +177,7 @@ print("Gerando imagem com os gráficos correspondentes de cada método.")
 gs = gridspec.GridSpec(2,3)
 gs.update(wspace=.1, hspace=.25)
 fig = plt.figure(figsize=(25, 10))
-fig.suptitle('Comparando resultados de cada método', size='xx-large')
+fig.suptitle('Comparando resultados de cada método', size='large')
 t = np.arange(0, 10.0000000001, 10/1000)
 
 ax1 = plt.subplot(gs[0, 0])
