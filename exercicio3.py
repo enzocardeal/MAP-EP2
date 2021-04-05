@@ -130,135 +130,110 @@ def euler_explicito(t_inicial, t_final, condicoes_iniciais, alpha):
         
     return(solucao)
 
-# Plota o grafico da solucao esperada, resolvida e do erro
-def plota_grafico3D(solucao, alpha, algoritmo):
-    # Cria as coordenadas x,y, e z
-    x = solucao[:,1]
-    y = solucao[:,2]
-    z = solucao[:,3]
-
-    # Faz a plotagem
-    fig = plt.figure()
-    ax =plt.axes(projection="3d")
-
-    fig.suptitle('Retrato de fase 3D com alpha=' + str(alpha))
-
-    ax.plot(x,y,z, label='retrato de fase')
-    ax.legend()
+def plota_grafico(solucao, alpha, algoritmo, i=''):
     
-    ax.set_xlabel('Coelhos')
-    ax.set_ylabel('Lebres')
-    ax.set_zlabel('Raposas')
-    
-    plt.savefig("retrato3d_" +algoritmo+ "_" + str(alpha) + ".jpg",bbox_inches='tight')
-    print("Imagem Salva!")
-    plt.show()
-    
-def plota_grafico2D(solucao, alpha, algoritmo):
-    # Cria as coordenadas x,y, e z
-    x = solucao[:,1]
-    y = solucao[:,2]
-    z = solucao[:,3]
-    
-    # Cria plotagem 2x2
-    gs = gridspec.GridSpec(2, 2)
-
-    fig = plt.figure()
-    fig.suptitle('Retrato de fase 2D com alpha=' + str(alpha))
-    
-    ax = plt.subplot(gs[0, 0]) # linha 0, coluna 0
-    ax.set_title('Coelhos X Lebres')
-    plt.plot(x,y)
-
-    ax = plt.subplot(gs[0, 1]) # linha 0, coluna 1
-    ax.set_title('Coelhos X Raposas')
-    plt.plot(x,z)
-
-    ax = plt.subplot(gs[1, :]) # linha 1, toda a coluna
-    ax.set_title('Lebres X Raposas')
-    plt.plot(y,z)
-
-    fig.tight_layout()
-    plt.savefig("retrato2d_" +algoritmo+ "_" + str(alpha) + ".jpg",bbox_inches='tight')
-    print("Imagem Salva!")
-    plt.show()
-
-def plota_tamanho(solucao, alpha, algoritmo):
-    # Cria as coordenadas
+    print("Gerando imagem com os gráficos correspondentes de cada método.")
+    # Coordenadas
     t = solucao[:,0]
     x = solucao[:,1]
     y = solucao[:,2]
     z = solucao[:,3]
 
-    # Cria plotagem 2x2
-    gs = gridspec.GridSpec(2, 2)
-    fig = plt.figure()
-    fig.suptitle('Tamanho da população com alpha=' + str(alpha))
-    
-    ax = plt.subplot(gs[0, 0]) 
-    ax.set_title('Coelhos X tempo')
-    plt.plot(t, x)
+    # plotagem
+    gs = gridspec.GridSpec(3,4)
+    gs.update(wspace=.6, hspace=.60)
+    fig = plt.figure(figsize=(15,10))
+    fig.suptitle('Resultado com ' + r'$\alpha$' + ' igual a ' + str(alpha)
+                  + ' usando: ' + algoritmo,
+                  size='xx-large')
 
-    ax = plt.subplot(gs[0, 1])
-    ax.set_title('Lebres X tempo')
-    plt.plot(t, y, color="black")
+    # Grafico 3D
+    ax1 = plt.subplot(gs[0, 0:2], projection="3d")
+    ax1.set_title('Retrato de fase 3D - Euler Explícito n=5000')
+    ax1.plot(x,y,z, label='retrato de fase')
+    ax1.set_xlabel('Coelhos')
+    ax1.set_ylabel('Lebres')
+    ax1.set_zlabel('Raposas')
 
-    ax = plt.subplot(gs[1, :])
-    ax.set_title('Raposas X tempo')
-    plt.plot(t,z, 'tab:red')
-    
-    fig.tight_layout()
-    plt.savefig("populacao_" +algoritmo+ "_" + str(alpha) + ".jpg",bbox_inches='tight')
-    print("Imagem Salva!")
+
+    # Retrato de fase 2D
+    ax1 = plt.subplot(gs[0,2:])
+    ax1.set_title('Retrato de fase 2D - Coelhos x Lebres n=5000')
+    plt.xlabel('Coelhos')
+    plt.ylabel('Lebres')
+    plt.plot(x,y)
+
+    ax = plt.subplot(gs[1, 0:2])
+    ax.set_title('Retrato de fase 2D - Coelhos X Raposas n=5000')
+    plt.xlabel('Coelhos')
+    plt.ylabel('Raposas')
+    plt.plot(x,z)
+
+    ax = plt.subplot(gs[1, 2:])
+    ax.set_title('Retrato de fase 2D - Lebres X Raposas n=5000')
+    plt.xlabel('Lebres')
+    plt.ylabel('Raposas')
+    plt.plot(y,z)
+
+    # Tamanho da Populacao
+    ax = plt.subplot(gs[2, 1:3])
+    ax.set_title('População ao longo do tempo n=5000')
+    plt.plot(t, x, color='blue', label='Coelhos')
+    plt.plot(t, y, color='black', label='Lebres')
+    plt.plot(t, z, color='red', label='Raposas')
+    plt.xlabel('Tempo')
+    plt.ylabel('População')
+    plt.legend()
+
+    # Salva Figura
+    plt.savefig('resultado_' + algoritmo + '_' + str(alpha) + i + '.jpg', bbox_inches='tight', dpi=300)
+    print("Imagem gerada. Confira a pasta raiz do programa.")
+    print("---------------------------------------------------------------------------------------------------\n\n")
     plt.show()
 
-# Euler
+# ---------------------------------------------------------------
+#Cabeçalho
+print("                Escola Politécnica da Universidade de São Paulo")
+print("               MAP3122 - Métodos num´ericos para resolução de EDOs")
+print("                                     Exercício 3")
+print("---------------------------------------------------------------------------------------------------\n\n")
+
+print("Parâmetros inicializados de acordo com o enunciado\n")
 alpha = [0.001, 0.002, 0.0033, 0.0036, 0.005, 0.0055]
 to = 0
 tf = [100, 500, 2000]
 condicoes_iniciais = [500, 500, 10]
+# ---------------- Resolvendo a questão 3.2 ---------------------
 for i in range(len(alpha)):
+    # Euler
     solucao = euler_explicito(to, tf[int(i/2)], condicoes_iniciais, alpha[i])
-    plota_grafico3D(solucao, alpha[i], "Euler")
-    plota_grafico2D(solucao, alpha[i], "Euler")
-    plota_tamanho(solucao, alpha[i], "Euler")
-
-# Teste de sensibilidade
-alpha =  0.005
-condicoes_iniciais = [[35,75, 137],[37,74,137]]
-tf = 400
-for i in range(len(condicoes_iniciais)):
-    solucao = euler_explicito(to, tf, condicoes_iniciais[i], alpha)
+    plota_grafico(solucao, alpha[i], "Euler")
     
-    plota_grafico3D(solucao, alpha, "Euler_sensib" + str(i))
-    plota_grafico2D(solucao, alpha, "Euler_sensib" + str(i))
-    plota_tamanho(solucao, alpha, "Euler_sensib" + str(i))
-
-    # Imprime no instante final
-    print(solucao[len(solucao)-1])
-    
-# Runge Kutta 4
-alpha = [0.001, 0.002, 0.0033, 0.0036, 0.005, 0.0055]
-to = 0
-tf = [100, 500, 2000]
-condicoes_iniciais = [500, 500, 10]
-for i in range(len(alpha)):
+    # Runge Kutta 4
     solucao = runge_kutta4(to, tf[int(i/2)], condicoes_iniciais, alpha[i])
-    plota_grafico3D(solucao, alpha[i], "RK4")
-    plota_grafico2D(solucao, alpha[i], "RK4")
-    plota_tamanho(solucao, alpha[i], "RK4")
+    plota_grafico(solucao, alpha[i], "RK4")
     
-
+# ---------------- Resolvendo a questão 3.3 ---------------------
 # Teste de sensibilidade
+print("Teste de Sensibilidade")
 alpha =  0.005
 condicoes_iniciais = [[35,75, 137],[37,74,137]]
 tf = 400
 for i in range(len(condicoes_iniciais)):
+    # Euler
+    solucao = euler_explicito(to, tf, condicoes_iniciais[i], alpha) 
+    plota_grafico(solucao, alpha, "Euler", str(i))
+
+    # Imprime o instante final
+    print("Tamanho da População para o teste de sensibilidade:")
+    print(solucao[len(solucao)-1])
+    print()
+
+    # Runge Kutta 4
     solucao = runge_kutta4(to, tf, condicoes_iniciais[i], alpha)
-    
-    plota_grafico3D(solucao, alpha, "RK4_sensib" + str(i))
-    plota_grafico2D(solucao, alpha, "RK4_sensib" + str(i))
-    plota_tamanho(solucao, alpha, "RK4_sensib" + str(i))
+    plota_grafico(solucao, alpha, "RK4", str(i))
 
     # Imprime no instante final
+    print("Tamanho da População para o teste de sensibilidade:")
     print(solucao[len(solucao)-1])
+    print()
