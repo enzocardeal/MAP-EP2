@@ -191,7 +191,7 @@ def plota_grafico(solucao, alpha, algoritmo, i=''):
     plt.savefig('resultado_' + algoritmo + '_' + str(alpha) + i + '.jpg', bbox_inches='tight', dpi=300)
     print("Imagem gerada. Confira a pasta raiz do programa.")
     print("---------------------------------------------------------------------------------------------------\n\n")
-    plt.show()
+    #plt.show()
 
 # ---------------------------------------------------------------
 #Cabeçalho
