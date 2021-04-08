@@ -111,18 +111,20 @@ def euler_explicito(t_inicial, t_final, condicoes_iniciais, alpha):
     # interacao metodo de euler
     while tn < t_final:
         v_aux = []
-        tn += h
         # Coelhos
-        xn1 = xn + h*x_linha(xn+h, yn+h, zn+h, A, B)
+        xn1 = xn + h*x_linha(xn, yn, zn, A, B)
         xn = xn1
         
         # Lebres
-        yn1 = yn + h*y_linha(xn+h, yn+h, zn+h, A, B)
+        yn1 = yn + h*y_linha(xn, yn, zn, A, B)       
         yn = yn1
         
         # Raposas
-        zn1 = zn + h*z_linha(xn+h, yn+h, zn+h, A, B)
+        zn1 = zn + h*z_linha(xn, yn, zn, A, B)
         zn = zn1
+        
+        # Atualiza variavel
+        tn += h
 
         # Coloca na Solucao
         v_aux = [tn, xn, yn, zn]
@@ -149,7 +151,7 @@ def plota_grafico(solucao, alpha, algoritmo, i=''):
 
     # Grafico 3D
     ax1 = plt.subplot(gs[0, 0:2], projection="3d")
-    ax1.set_title('Retrato de fase 3D - Euler Explícito n=5000')
+    ax1.set_title('Retrato de fase 3D - n=5000')
     ax1.plot(x,y,z, label='retrato de fase')
     ax1.set_xlabel('Coelhos')
     ax1.set_ylabel('Lebres')
@@ -217,7 +219,7 @@ for i in range(len(alpha)):
 # Teste de sensibilidade
 print("Teste de Sensibilidade")
 alpha =  0.005
-condicoes_iniciais = [[35,75, 137],[37,74,137]]
+condicoes_iniciais = [[37,75, 137],[37,74,137]]
 tf = 400
 for i in range(len(condicoes_iniciais)):
     # Euler
@@ -225,7 +227,7 @@ for i in range(len(condicoes_iniciais)):
     plota_grafico(solucao, alpha, "Euler", str(i))
 
     # Imprime o instante final
-    print("Tamanho da População para o teste de sensibilidade:")
+    print("Tamanho da População para o teste de sensibilidade " + str(i+1) +" :" + " Euler")
     print(solucao[len(solucao)-1])
     print()
 
@@ -234,6 +236,6 @@ for i in range(len(condicoes_iniciais)):
     plota_grafico(solucao, alpha, "RK4", str(i))
 
     # Imprime no instante final
-    print("Tamanho da População para o teste de sensibilidade:")
+    print("Tamanho da População para o teste de sensibilidade " +  str(i+1) + " :"  + " RK4")
     print(solucao[len(solucao)-1])
     print()
